@@ -18,8 +18,10 @@
   "author": "Ayyalu",
   "license": "ISC",
   "dependencies": {
-  "body-parser": "^1.18.3",
-  "ejs": "^2.6.1",
-  "express": "^4.16.4"
+    "body-parser": "^1.18.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "ipfs-http-client": "^47.0.1",
+    "web3": "^1.2.11"
   }
 }

@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="../public/css/bootstrap.min.css" type="text/css">
 <link rel="stylesheet" href="../public/css/style.css" type="text/css">
 <link rel="stylesheet" href="../public/css/sweet-alert.css" type="text/css">
+<script src='../public/js/web3.min.js'></script>
 
 <script>
 
@@ -19,35 +20,35 @@ window.addEventListener('load', async () => {
         window.web3 = new Web3(ethereum);
         try {
             await ethereum.enable();
-			UserAddress=web3.eth.coinbase;
+			UserAddress=await web3.eth.getCoinbase();
         } catch (error) {
             alert("User denied account access...");
         }
     }
     else if (window.web3) {
         window.web3 = new Web3(web3.currentProvider);
-		UserAddress=web3.eth.coinbase;
+		UserAddress=await web3.eth.getCoinbase();
     }
     else {
         alert('Non-Ethereum browser detected. You should consider trying MetaMask!');
     }
 });
 
-function AddUser()
+async function AddUser()
 {
-	var ABIString = document.getElementById("hdnContractABI").value; 
-	ABIString = ABIString.replace(/'/g , "\"");
-	ABIJSON = JSON.parse(ABIString);
-	MyContract = web3.eth.contract(ABIJSON).at("<%=ContractAddress%>");
+	
+	ABIJSON = JSON.parse('<%-JSON.stringify(abi)%>');
+	MyContract = new web3.eth.Contract(ABIJSON,"<%=ContractAddress%>");
 
 	var FullName = document.getElementById("txtFullName").value; 
 	var EmailID = document.getElementById("txtEmailID").value; 
 	var MobileNo = document.getElementById("txtMobileNo").value; 
 	
-	MyContract.AddUser.sendTransaction(UserAddress,FullName,EmailID,MobileNo,function(err, transactionHash) {
+	MyContract.methods.AddUser(UserAddress,FullName,EmailID,MobileNo).send({from:UserAddress},function(err,msg) {
 		if(!err)
-		{
-			location.href="/Message?TransHash="+transactionHash
+		{   
+			console.log("ye");
+			location.href="/Message?TransHash="+msg
 		}
 		else
 		{

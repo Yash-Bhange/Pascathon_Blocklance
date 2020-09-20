@@ -1,6 +1,9 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var path = require('path');
+var Web3 = require('web3');
+var ipfsClient=require('ipfs-http-client');
+var jsonbuild=require('./smartcontract/build/contracts/IdentityManagement.json');
 
 var app = express();
 app.set('view engine', 'ejs');
@@ -16,20 +19,23 @@ app.use(function(req, res, next) {
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); 
 
-// Deploy Smart Contract and place smart contract address here 
-var ContractAddress = "0x8Eb88Bf3544CB05806711fd257bC06A0B22fa605";
 
 app.get('/', function (req, res) {
+	
 	res.render("index")
 })
 
 app.get('/AddUser', function (req, res) {
-	var data = {ContractAddress:ContractAddress};
+	 var ca=jsonbuild.networks['5777'].address;
+	 var ab=jsonbuild.abi;
+	var data = {ContractAddress:ca,abi:ab};
 	res.render("AddUser",data);
 })
 
 app.get('/AddUserDL', function (req, res) {
-	var data = {ContractAddress:ContractAddress};
+    var ca=jsonbuild.networks['5777'].address;
+	 var ab=jsonbuild.abi;
+	var data = {ContractAddress:ca,abi:ab};
 	res.render("AddUserDL",data);
 })
 
