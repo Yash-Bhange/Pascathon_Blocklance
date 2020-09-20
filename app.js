@@ -33,34 +33,8 @@ app.get('/AddUserDL', function (req, res) {
 	res.render("AddUserDL",data);
 })
 
-app.get('/ViewRequest', function (req, res) {
-	var data = {ContractAddress:ContractAddress};
-	res.render("ViewRequest",data)
-})
 
-app.post('/ViewRequestDetail', function (req, res) {
-	RequestIndex = req.body.hdnRequestIndex;
-	InstitutionName = req.body.hdnInstitutionName;
-	var data = {ContractAddress:ContractAddress,RequestIndex:RequestIndex,InstitutionName:InstitutionName};
-	res.render("ViewRequestDetail",data);
-})
 
-app.get('/RequestAccess', function (req, res) {
-	var data = {ContractAddress:ContractAddress};
-	res.render("RequestAccess",data);
-})
-
-app.get('/ViewRequest_Org', function (req, res) {
-	var data = {ContractAddress:ContractAddress};
-	res.render("ViewRequest_Org",data);
-})
-
-app.post('/ViewRequestDetail_Org', function (req, res) {
-	RequestIndex = req.body.hdnRequestIndex;
-	InstitutionName = req.body.hdnInstitutionName;
-	var data = {ContractAddress:ContractAddress,RequestIndex:RequestIndex,InstitutionName:InstitutionName};
-	res.render("ViewRequestDetail_Org",data);
-})
 
 app.get('/Message', function (req, res) {
 	var TransHash = req.query.TransHash;
