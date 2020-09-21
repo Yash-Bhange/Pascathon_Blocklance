@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="">
 <meta name="author" content="">
-<title>1ID</title>
+<title>KYC Management System</title>
 <link rel="stylesheet" href="../public/css/bootstrap.min.css" type="text/css">
 <link rel="stylesheet" href="../public/css/style.css" type="text/css">
 <link rel="stylesheet" href="../public/css/sweet-alert.css" type="text/css">
@@ -25,7 +25,7 @@ window.addEventListener('load', async () => {
             await ethereum.enable();
 			UserAddress=await web3.eth.getCoinbase();
         } catch (error) {
-            alert("User denied account access...");
+            window.alert("User denied account access...");
         }
     }
     else if (window.web3) {
@@ -33,7 +33,7 @@ window.addEventListener('load', async () => {
 		UserAddress=await web3.eth.getCoinbase();
     }
     else {
-        alert('Non-Ethereum browser detected. You should consider trying MetaMask!');
+        window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!');
     }
 });
 
@@ -131,7 +131,7 @@ async function getDLHash()
 		
 		<div class="col-md-4 center-block">
 			<div class="panel panel-info">
-				<div class="panel-heading">
+				<div class="panel-heading" style="background-color: #4caf50;">
 					<h3 class="panel-title">Add Driving Licence Details</h3>
 				</div>
 				<div class="panel-body">
@@ -171,17 +171,7 @@ async function getDLHash()
 
 </form>
 
-<footer class="navbar-fixed-bottom">
-<div class="container">
-	<div class="row">
-		<div class="col-md-12 text-center">
-			<div class="footer-copyright">
-				&copy; 2019 1ID
-			</div>
-		</div>
-	</div>
-</div>
-</footer>
+
 
 <script src="../public/js/buffer/buffer.js"></script>
 <script src="../public/js/ipfsapi/index.js" integrity="sha384-5bXRcW9kyxxnSMbOoHzraqa7Z0PQWIao+cgeg327zit1hz5LZCEbIMx/LWKPReuB" crossorigin="anonymous"></script>

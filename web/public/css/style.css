@@ -285,14 +285,15 @@ aside {
 }
 
 .navbar-default {
-	border-color:#03a9f4 !important;
+	border-color:#101111 !important;
 	height : 80px;
+	background-color: #383a3a !important;
 	padding-top: 15px;
 	font-family:"Baloo Tamma";
-	background-color:#03a9f4 !important;
 	-webkit-transition:all .35s;
 	-moz-transition:all .35s;
 	transition:all .35s;
+	
 }
 
 .navbar-default .navbar-header .navbar-brand {

@@ -4,7 +4,7 @@ pragma solidity >=0.4.22 <0.8.0;
 contract IdentityManagement
 {
 
-    address ContractOwner;
+    address public ContractOwner;
     
     constructor() public {
         ContractOwner = msg.sender;
@@ -46,6 +46,13 @@ contract IdentityManagement
     mapping(address => UserInfo[]) UserMap;
 	mapping(address => UserDL[]) UserDLMap;
     mapping(address => DLRequest[]) DLRequestMap;
+    mapping(address=>string) public checkFI;
+
+
+
+    function addFI(address FIaddress,string memory FIname)public{
+        checkFI[address(FIaddress)]=FIname;
+    }
 	
 	
     function AddUser(address UserAddress,string memory FullName,string memory EmailID,uint MobileNo) public

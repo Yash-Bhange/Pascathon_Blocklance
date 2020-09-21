@@ -22,7 +22,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', function (req, res) {
 	
-	res.render("index")
+	var ca=jsonbuild.networks['5777'].address;
+	var ab=jsonbuild.abi;
+   var data = {ContractAddress:ca,abi:ab};
+   res.render("index",data);
 })
 
 app.get('/AddUser', function (req, res) {
@@ -37,6 +40,12 @@ app.get('/AddUserDL', function (req, res) {
 	 var ab=jsonbuild.abi;
 	var data = {ContractAddress:ca,abi:ab};
 	res.render("AddUserDL",data);
+})
+app.get('/Admin', function (req, res) {
+    var ca=jsonbuild.networks['5777'].address;
+	 var ab=jsonbuild.abi;
+	var data = {ContractAddress:ca,abi:ab};
+	res.render("Admin",data);
 })
 
 
