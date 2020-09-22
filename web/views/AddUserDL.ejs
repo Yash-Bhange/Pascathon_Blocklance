@@ -10,35 +10,40 @@
 <link rel="stylesheet" href="../public/css/style.css" type="text/css">
 <link rel="stylesheet" href="../public/css/sweet-alert.css" type="text/css">
 <script src='../public/js/web3.min.js'></script>
-<script src="https://cdn.jsdelivr.net/npm/ipfs/dist/index.min.js"></script>
+<script src="https://wzrd.in/standalone/buffer"></script>
+<script src="https://cdn.jsdelivr.net/npm/ipfs-http-client/dist/index.min.js" integrity="sha384-QLpfu4MN5a74pVNs5eOUULGU/41/GbJNYOH8t6JcIzrsdOJKM1dcsZ3jULT0tRc5" crossorigin="anonymous"></script>
+
+  <script>
 
 
-<script>
-
-var UserAddress="";
-var DL_Hash="";
-
+	
 window.addEventListener('load', async () => {
     if (window.ethereum) {
         window.web3 = new Web3(ethereum);
         try {
             await ethereum.enable();
-			UserAddress=await web3.eth.getCoinbase();
+			
         } catch (error) {
             window.alert("User denied account access...");
         }
     }
     else if (window.web3) {
         window.web3 = new Web3(web3.currentProvider);
-		UserAddress=await web3.eth.getCoinbase();
+		
     }
     else {
         window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!');
-    }
+	}
+
+	UserAddress=await web3.eth.getCoinbase();
+	document.getElementById("address").value=UserAddress;
+
+	
+	
 });
 
 
-async function AddUserDL()
+async function AddUserDL(dlHash)
 {
 	ABIJSON = JSON.parse('<%-JSON.stringify(abi)%>');
 	MyContract = new web3.eth.Contract(ABIJSON,"<%=ContractAddress%>");
@@ -47,6 +52,9 @@ async function AddUserDL()
 	var DL_Name = document.getElementById("txtFullName").value;
 	var DL_DOB = document.getElementById("txtDOB").value;
 	var DL_Address = document.getElementById("txtAddress").value;
+	console.log("hey there");
+	
+
 	
 	MyContract.methods.AddUserDL(UserAddress,DL_No,DL_Name,DL_DOB,DL_Hash,DL_Address).send({from:UserAddress},function(err, transactionHash) {
 		if(!err)
@@ -61,40 +69,73 @@ async function AddUserDL()
 
 }
 
+
 async function getDLHash()
-{
+{    
+    var fr,file;
 	const reader = new FileReader();
 	const invoicefile = document.getElementById("invoicefile");
-	reader.readAsArrayBuffer(invoicefile.files[0]); // Read Provided File
-	  
-    reader.onloadend = function() {
-			/*const ipfs = window.IpfsApi('localhost', 5001, {protocol: 'https'}) // Connect to IPFS
-			const buf = buffer.Buffer(reader.result) // Convert data into buffer
-			
-			ipfs.files.add(buf)
-				.then(function (result) {
-					DL_Hash=result[0].hash;
-					//console.log(DLHash)
-					AddUserDL();
-				})
-				.catch(function(err) {
-					console.log('Fail: ', err)
-			})
-			*/
-			const node = await Ipfs.create({ repo: 'ipfs-' + Math.random()})
-			window.node = node;
-			const status = node.isOnline() ? 'online' : 'offline'
-			console.log(`Node status: ${status}`);
-			const buf = buffer.Buffer(reader.result)
-			const cnd=await node.add(buf);
-			console.log("cnd",cnd);
-			AddUserDL();
+	file=invoicefile.files[0]; // Read Provided File
+	fr = new FileReader();
+   fr.onloadend = receivedText();
+    async function receivedText() {
+		   fr = new FileReader();
+		   fr.readAsBinaryString(file);
+		   
+		   const buf = buffer.Buffer(fr.result)
 
+		   console.log("file",buf)
+			
+			
+
+		   //const node = await window.Ipfs.create({ repo: 'ipfs-' + Math.random() })
+		  //const node= window.IpfsApi('localhost', 5001)
+		  //const ipfs = window.IpfsApi({ host:'ipfs.infura.io', port: '5001', protocol: 'http' })
+		  const node = window.IpfsHttpClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
+			window.node =node;
+
+			
+		
+		const inputFile=await node.add(buf);
+
+		console.log(inputFile.cid);
+		console.log(inputFile.cid.multihash)
+
+		
+		const data = await (node.cat(inputFile.cid.string));
+         try{
+				console.log("fu",data.toString())
+				
+		 }
+		 catch(err){
+			 console.log(err);
+		 }
+	
+		
+		
+
+		
+		/*,(err,result)=>{
+
+		 if(err)
+		 {
+			 console.log(err);
+		 }
+		 else{
+			 console
+			re.on('data', (file) => {
+				var invoiceURL = "https://ipfs.io/ipfs/"+file.path;
+				console.log("inv",invoiceURL);
+			  })
+		 }
+			*/
+			
   
     }
-}
+};
 
-</script>
+
+  </script>
 
 </head>
 <body id="page-top">
@@ -125,7 +166,7 @@ async function getDLHash()
 <!-- /.container -->
 </nav>
 
-<form name="IntelitixForm" method="post">
+<form  name="IntelitixForm" method="post" action="/Admindetail" enctype="multipart/form-data">
 <div class="container container_body">
 	<div class="row">
 		
@@ -137,28 +178,35 @@ async function getDLHash()
 				<div class="panel-body">
 
 					<div class="form-group">
-						<label class="control-label" for="txtLicenceNo">Driving Licence No.</label>
-						<input class="form-control" name="txtLicenceNo" id="txtLicenceNo" type="text" value="" placeholder="Licence No.">
+						<label class="control-label" >Driving Licence No.</label>
+						<input class="form-control" name="txtLicenceNo" id="txtLicenceNo" type="string"  placeholder="Licence No.">
 					</div>
 					<div class="form-group">
-						<label class="control-label" for="txtFullName">Name as per Driving Licence</label>
-						<input class="form-control" name="txtFullName" id="txtFullName" type="text" value="" placeholder="Name">
+						<label class="control-label" >Name as per Driving Licence</label>
+						<input class="form-control" name="txtFullName" id="txtFullName" type="text"  placeholder="Name">
 					</div>
 					<div class="form-group">
-						<label class="control-label" for="txtDOB">DOB as per Driving Licence</label>
-						<input class="form-control" name="txtDOB" id="txtDOB" type="text" value="" placeholder="DD/MM/YYYY">
+						<label class="control-label" >DOB as per Driving Licence</label>
+						<input class="form-control" name="txtDOB" id="txtDOB" type="text"  placeholder="DD/MM/YYYY">
 					</div>
 					<div class="form-group">
-						<label class="control-label" for="txtAddress">Address as per Driving Licence</label>
+						<label class="control-label" >Address as per Driving Licence</label>
 						<textarea class="form-control" rows="4" name="txtAddress" id="txtAddress" placeholder="Address here ..."></textarea>
 					</div>
 					<div class="form-group">
-						<label class="control-label" for="txtFinanceAmount">Attach Driving Licence</label>
-						<input type="file" name="invoicefile" id="invoicefile">
+						<label class="control-label" >Attach Driving Licence</label>
+						<input type="file" name="invoicefile" id="invoicefile" accept="image/*">
 					</div>
+
+					<div class="form-group">
+						<label class="control-label" >Your Blockchain Id</label>
+						<input class="form-control" name="coinacc" id="address" type="text" value=""  placeholder="your blockchain address" readonly>
+					</div>
+						
+						
 					
 					<div class="aligncenter">
-						<button type="button" class="btn btnsm btn-primary" onClick="getDLHash()">Add Driving Licence</button>
+						<input type="submit" class="btn btnsm btn-primary" value="Add Driving Licence">
 					</div>
 				</div>
 			</div>
@@ -167,14 +215,10 @@ async function getDLHash()
 	<br>
 </div>
 
-<input type="hidden" id="hdnContractABI" name="hdnContractABI" value="[{'constant':true,'inputs':[{'name':'UserAddress','type':'address'},{'name':'RequestIndex','type':'uint256'}],'name':'ViewDLRequestDetail','outputs':[{'name':'RequestedBy','type':'string'},{'name':'DL_No','type':'uint256'},{'name':'DL_Name','type':'uint256'},{'name':'DL_DOB','type':'uint256'},{'name':'DL_Hash','type':'uint256'},{'name':'DL_Address','type':'uint256'},{'name':'DL_OverAll_Status','type':'uint256'}],'payable':false,'stateMutability':'view','type':'function'},{'constant':false,'inputs':[{'name':'UserAddress','type':'address'},{'name':'FullName','type':'string'},{'name':'EmailID','type':'string'},{'name':'MobileNo','type':'uint256'}],'name':'AddUser','outputs':[],'payable':false,'stateMutability':'nonpayable','type':'function'},{'constant':true,'inputs':[{'name':'UserAddress','type':'address'}],'name':'ViewDLRequestLength','outputs':[{'name':'','type':'uint256'}],'payable':false,'stateMutability':'view','type':'function'},{'constant':false,'inputs':[{'name':'UserAddress','type':'address'},{'name':'DL_No','type':'string'},{'name':'DL_Name','type':'string'},{'name':'DL_DOB','type':'string'},{'name':'DL_Hash','type':'bytes'},{'name':'DL_Address','type':'string'}],'name':'AddUserDL','outputs':[],'payable':false,'stateMutability':'nonpayable','type':'function'},{'constant':true,'inputs':[{'name':'UserAddress','type':'address'},{'name':'RequestIndex','type':'uint256'}],'name':'viewUserDL','outputs':[{'name':'DL_No_S','type':'uint256'},{'name':'DL_No_V','type':'string'},{'name':'DL_Name_S','type':'uint256'},{'name':'DL_Name_V','type':'string'},{'name':'DL_DOB_S','type':'uint256'},{'name':'DL_DOB_V','type':'string'},{'name':'DL_Hash_S','type':'uint256'},{'name':'DL_Hash_V','type':'bytes'},{'name':'DL_Address_S','type':'uint256'},{'name':'DL_Address_V','type':'string'}],'payable':false,'stateMutability':'view','type':'function'},{'constant':true,'inputs':[{'name':'UserAddress','type':'address'},{'name':'RequestIndex','type':'uint256'}],'name':'ViewDLRequestHeader','outputs':[{'name':'RequestedBy','type':'string'},{'name':'DL_OverAll_Status','type':'uint256'}],'payable':false,'stateMutability':'view','type':'function'},{'constant':true,'inputs':[{'name':'UserAddress','type':'address'},{'name':'UserIndex','type':'uint256'}],'name':'viewUser','outputs':[{'name':'FullName','type':'string'},{'name':'EmailID','type':'string'},{'name':'MobileNo','type':'uint256'}],'payable':false,'stateMutability':'view','type':'function'},{'constant':false,'inputs':[{'name':'UserAddress','type':'address'},{'name':'RequestIndex','type':'uint256'},{'name':'DL_No','type':'uint256'},{'name':'DL_Name','type':'uint256'},{'name':'DL_DOB','type':'uint256'},{'name':'DL_Hash','type':'uint256'},{'name':'DL_Address','type':'uint256'},{'name':'DL_OverAll_Status','type':'uint256'}],'name':'UpdateRequestStatus','outputs':[],'payable':false,'stateMutability':'nonpayable','type':'function'},{'constant':false,'inputs':[{'name':'UserAddress','type':'address'},{'name':'RequestedBy','type':'string'},{'name':'DL_No','type':'uint256'},{'name':'DL_Name','type':'uint256'},{'name':'DL_DOB','type':'uint256'},{'name':'DL_Hash','type':'uint256'},{'name':'DL_Address','type':'uint256'},{'name':'DL_OverAll_Status','type':'uint256'}],'name':'AddDLRequest','outputs':[],'payable':false,'stateMutability':'nonpayable','type':'function'},{'inputs':[],'payable':false,'stateMutability':'nonpayable','type':'constructor'}]">
 
 </form>
 
 
-
-<script src="../public/js/buffer/buffer.js"></script>
-<script src="../public/js/ipfsapi/index.js" integrity="sha384-5bXRcW9kyxxnSMbOoHzraqa7Z0PQWIao+cgeg327zit1hz5LZCEbIMx/LWKPReuB" crossorigin="anonymous"></script>
 
 <script src="../public/js/jquery.js"></script>
 <script src="../public/js/bootstrap.min.js"></script>

@@ -44,8 +44,8 @@
 			if(!err)
 			{   
 
-				console.log("ye",msg);
-				if(msg==UserAddress)
+				console.log("ye",typeof msg);
+				if(msg.localeCompare(UserAddress))
 				{
 					window.location.href='/Admin';
 				}

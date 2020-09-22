@@ -20,7 +20,7 @@ contract IdentityManagement
 		string DL_No;
 		string DL_Name;
 		string DL_DOB;
-		bytes DL_Hash;
+		string DL_Hash;
 		string DL_Address;
     }
     struct DLRequest{
@@ -60,7 +60,7 @@ contract IdentityManagement
         UserMap[UserAddress].push(UserInfo(FullName,EmailID,MobileNo));
     }
 
-    function AddUserDL(address UserAddress,string memory DL_No, string memory DL_Name, string memory DL_DOB, bytes memory DL_Hash, string memory DL_Address)public
+    function AddUserDL(address UserAddress,string memory DL_No, string memory DL_Name, string memory DL_DOB, string memory DL_Hash, string memory DL_Address)public
     {
         UserDLMap[UserAddress].push(UserDL(DL_No, DL_Name, DL_DOB, DL_Hash, DL_Address));
     }
