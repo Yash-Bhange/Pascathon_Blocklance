@@ -23,6 +23,7 @@ app.use(function(req, res, next) {
 });
 
 app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({extended:false}));
 
 
 
@@ -75,7 +76,7 @@ app.get('/Admin', function (req, res,next) {
 	res.render("Admin",data);
 })
 
-app.post('/Admindetail',upload,function(req,res,next){
+app.post('/AddUserDLPost',upload,function(req,res,next){
 
 	var ca=jsonbuild.networks['5777'].address;
 	var ab=jsonbuild.abi;
@@ -121,10 +122,11 @@ app.post('/Admindetail',upload,function(req,res,next){
 	
 	
 	
-	KYC.methods.AddUserDL(addc,DL_No,DL_Name,DL_DOB,imageurl1,DL_Address).send({from:addc},function(err, transactionHash) {
+	KYC.methods.AddUserDL(addc,DL_No,DL_Name,DL_DOB,imageurl1,DL_Address).send({from:addc,gasPrice:2,gas:240000},function(err, transactionHash) {
 		if(!err)
 		{
 			console.log(transactionHash);
+			res.render('Message',{TransHash:transactionHash});
 		}
 		else
 		{
@@ -136,7 +138,46 @@ app.post('/Admindetail',upload,function(req,res,next){
 
 })
 
+app.get('/ViewRequest', function (req, res,next) {
+	var ca=jsonbuild.networks['5777'].address;
+	var ab=jsonbuild.abi;
+   var data = {ContractAddress:ca,abi:ab};
 
+	res.render("ViewRequest",data)
+})
+app.post('/ViewRequestDetail', function (req, res,next) {
+	var ca=jsonbuild.networks['5777'].address;
+	var ab=jsonbuild.abi;
+	var RequestIndex = req.body.hdnRequestIndex;
+	var InstitutionName = req.body.hdnInstitutionName;
+	console.log("uisdhu",InstitutionName);
+	
+	res.render("ViewRequestDetail",{ContractAddress:ca,RequestIndex:RequestIndex,InstitutionName:InstitutionName,abi:ab});
+})
+
+app.get('/RequestAccess', function (req, res) {
+	var ca=jsonbuild.networks['5777'].address;
+	var ab=jsonbuild.abi;
+	var data = {ContractAddress:ca,abi:ab};
+	res.render("RequestAccess",data);
+})
+
+app.get('/ViewRequest_Org', function (req, res) {
+	var ca=jsonbuild.networks['5777'].address;
+	var ab=jsonbuild.abi;
+	var data = {ContractAddress:ca,abi:ab};
+	res.render("ViewRequest_Org",data);
+})
+
+app.post('/ViewRequestDetail_Org', function (req, res) {
+	var ca=jsonbuild.networks['5777'].address;
+	var ab=jsonbuild.abi;
+	RequestIndex = req.body.hdnRequestIndex;
+	InstitutionName = req.body.hdnInstitutionName;
+	console.log("de",InstitutionName);
+	var data = {ContractAddress:ca,RequestIndex:RequestIndex,InstitutionName:InstitutionName,abi:ab};
+	res.render("ViewRequestDetail_Org",data);
+})
 
 
 app.get('/Message', function (req, res) {
